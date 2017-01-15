@@ -21,6 +21,10 @@ public class Catalogue implements I_Catalogue {
 		produitFactory = new ProduitXmlFactory();
 		lesProduits = produitFactory.getToutLesProduits();
 	}
+	public Catalogue(List<I_Produit> produits) {
+		produitFactory = new ProduitDAOPourTest();
+		lesProduits = produits;
+	}
 
 	@Override
 	public boolean addProduit(I_Produit produit) {
@@ -89,7 +93,7 @@ public class Catalogue implements I_Catalogue {
 		if (leProduitExiste(nomProduit)) {
 			stockAjoute = produitFactory.ajouterQuantiteProduit(nomProduit, qteAchetee);
 			if(stockAjoute)
-				get(nomProduit).ajouter(qteAchetee);
+				stockAjoute = get(nomProduit).ajouter(qteAchetee);
 		}
 		return stockAjoute;
 	}
@@ -100,7 +104,7 @@ public class Catalogue implements I_Catalogue {
 		if (leProduitExiste(nomProduit)) {
 			leStockEstVendu = produitFactory.enleverQuantiteProduit(nomProduit, qteVendue);
 			if(leStockEstVendu)
-				get(nomProduit).enlever(qteVendue);
+				leStockEstVendu = get(nomProduit).enlever(qteVendue);
 		}
 		return leStockEstVendu;
 	}
@@ -174,11 +178,9 @@ public class Catalogue implements I_Catalogue {
 	public String toString() {
 		String toStringCat = "";
 		int i = 0;
-		List<I_Produit> lesProduitsBdd;
-		lesProduitsBdd = produitFactory.getToutLesProduits();
 
-		while (i < lesProduitsBdd.size()) {
-			toStringCat += lesProduitsBdd.get(i).toString() + "\n";
+		while (i < lesProduits.size()) {
+			toStringCat += lesProduits.get(i).toString() + "\n";
 			i++;
 		}
 		toStringCat += "\nMontant total TTC du stock : " + nf.format(getMontantTotalTTC());

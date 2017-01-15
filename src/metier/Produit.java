@@ -76,12 +76,10 @@ public class Produit implements I_Produit{
 
 	@Override
 	public String toString() {
-		// Mars - prix HT : 10,00 â‚¬ - prix TTC : 12,00 â‚¬ - quantitÃ© en stock : 5
+		// Mars - prix HT : 10,00 € - prix TTC : 12,00 € - quantité en stock :
 		return this.nom + " - prix HT : "+nf.format(prixUnitaireHT )+ " - prix TTC : "
-				+ nf.format(getPrixUnitaireTTC() ) + " - quantitÃ© en stock : "
+				+ nf.format(getPrixUnitaireTTC() ) + " - quantité en stock : "
 				+quantiteStock;
-				/*"Produit [quantiteStock=" + quantiteStock + ", nom=" + nom
-				+ ", prixUnitaireHT =" + (double)Math.round(prixUnitaireHT * 100) / 100  + "]";*/
 	}
 	
 	
