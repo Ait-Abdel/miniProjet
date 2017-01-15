@@ -16,5 +16,7 @@ public interface ProduitFactory {
 	public abstract boolean deleteAll();
 	
 	public abstract I_Produit getProduit(String nom);
+	
+	public abstract void fermerAccesAuDonnees();
 
 }

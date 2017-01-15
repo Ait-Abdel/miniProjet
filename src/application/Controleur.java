@@ -38,6 +38,10 @@ public class Controleur {
 	public static ControleurStock getCs(){
 		return cs;
 	}
+	public void fermerAccesAuDonnees() {
+		cat.fermerAccesAuDonnees();
+		
+	}
 
 
 	

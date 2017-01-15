@@ -28,7 +28,7 @@ public class ProduitSqlFactory implements ProduitFactory {
 
 		try {
 
-			statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(req);
 			while (resultSet.next()) {
 
@@ -66,7 +66,6 @@ public class ProduitSqlFactory implements ProduitFactory {
 			try {
 				callableStatement.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -77,19 +76,17 @@ public class ProduitSqlFactory implements ProduitFactory {
 	@Override
 	public boolean deleteProduit(String nom) {
 		boolean produitSupprimee = false;
-		PreparedStatement preparedStatement = null;
+		Statement statement = null;
 
 		try {
-			String res = "delete from Produits where nom = '" + nom + "'";
-			preparedStatement = connection.prepareStatement(res);
-			// preparedStatement.setString(1, nom);
-
-			if (preparedStatement.executeUpdate() != 0)
+			String res = "delete from Produits where nom = '" + nom + "' ";
+			statement = connection.createStatement();
+			if (statement.executeUpdate(res) != 0)
 				produitSupprimee = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			closePreparedStatement(preparedStatement);
+			closeStatement(statement);
 		}
 		return produitSupprimee;
 	}
@@ -104,7 +101,7 @@ public class ProduitSqlFactory implements ProduitFactory {
 			try {
 				String req = "Update Produits set QUANTITESTOCK  = " + produit.getQuantite() + " where nom = '"
 						+ produit.getNom() + "' ";
-				statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement = connection.createStatement();
 				if (statement.executeUpdate(req) != 0)
 					qteEnlevee = true;
 			} catch (SQLException e) {
@@ -122,22 +119,21 @@ public class ProduitSqlFactory implements ProduitFactory {
 		boolean qteAjoutee = false;
 		Statement statement = null;
 		String req = null;
-		System.out.println("fkezfjksjflsjs");
 		I_Produit produit = getProduit(nom);
 		if (produit.ajouter(quantiteStock)) {
-			req = "Update Produits set QUANTITESTOCK  = " + produit.getQuantite() + " where nom = '"+ produit.getNom() + "' ";
+			req = "Update Produits set QUANTITESTOCK  = " + produit.getQuantite() + " where nom = '" + produit.getNom()
+					+ "' ";
 			try {
-				statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement = connection.createStatement();
 				if (statement.executeUpdate(req) != 0)
 					qteAjoutee = true;
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} finally {
 				closeStatement(statement);
-				
+
 			}
 		}
-		
 
 		return qteAjoutee;
 	}
@@ -153,17 +149,17 @@ public class ProduitSqlFactory implements ProduitFactory {
 	@Override
 	public boolean deleteAll() {
 		boolean supprimertousLesProduits = false;
-		PreparedStatement preparedStatement = null;
+		Statement statement = null;
 
 		try {
 			String res = "delete from Produits ";
-			preparedStatement = connection.prepareStatement(res);
-			if (preparedStatement.executeUpdate() != 0)
+			statement = connection.createStatement();
+			if (statement.executeUpdate(res) != 0)
 				supprimertousLesProduits = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			closePreparedStatement(preparedStatement);
+			closeStatement(statement);
 		}
 
 		return supprimertousLesProduits;
@@ -176,16 +172,13 @@ public class ProduitSqlFactory implements ProduitFactory {
 			e.printStackTrace();
 		}
 	}
-	
-
-	
 
 	public I_Produit getProduit(String nom) {
 		I_Produit produit = null;
 		Statement statement = null;
 		try {
-			String req = "Select *  from Produits where nom = '" + nom + "'";
-			statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			String req = "Select * from Produits where nom = '"+nom+"'";
+			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(req);
 			if (resultSet.next()) {
 
@@ -197,10 +190,20 @@ public class ProduitSqlFactory implements ProduitFactory {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			
 		} finally {
 			closeStatement(statement);
 		}
 		return produit;
+	}
+
+	@Override
+	public void fermerAccesAuDonnees() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

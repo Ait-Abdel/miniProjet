@@ -53,7 +53,7 @@ public class FenetreNouveauProduit extends JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		int qtProduit = Integer.parseInt(txtQte.getText());
-		int prixHt = Integer.parseInt(txtPrixHT.getText());
+		double prixHt =  Double.parseDouble(txtPrixHT.getText());
 		cns.ajouterProduit(txtNom.getText(), prixHt , qtProduit );
 		this.dispose();
 	}

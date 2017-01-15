@@ -17,19 +17,22 @@ public class Catalogue implements I_Catalogue {
 	private NumberFormat nf = NumberFormat.getCurrencyInstance();
 
 	public Catalogue() {
-		
-		produitFactory = new ProduitSqlFactory();
-		lesProduits =  produitFactory.getToutLesProduits();
+
+		produitFactory = new ProduitXmlFactory();
+		lesProduits = produitFactory.getToutLesProduits();
 	}
 
 	@Override
 	public boolean addProduit(I_Produit produit) {
-		// TODO Auto-generated method stub
 		boolean produitCree = false;
 		if (produit != null && produit.getPrixUnitaireHT() > 0 && produit.getQuantite() >= 0) {
-			if (existe(produit.getNom()) == false) {
-				lesProduits.add(produit);
-				produitCree = true;
+			if (leProduitExiste(produit.getNom()) == false) {
+				String nom = produit.getNom();
+				double prix = produit.getPrixUnitaireHT();
+				int qte = produit.getQuantite();
+				produitCree = produitFactory.createProduit(nom, prix, qte);
+				if (produitCree)
+					lesProduits.add(produit);
 			}
 		}
 
@@ -40,36 +43,42 @@ public class Catalogue implements I_Catalogue {
 	public boolean addProduit(String nom, double prix, int qte) {
 		boolean produitCree = false;
 
-		if (existe(nom) == false && prix > 0 && qte >= 0) {
+		if (leProduitExiste(nom) == false && prix > 0 && qte >= 0) {
 			Produit unProduit = new Produit(nom, (float) prix, qte);
 			produitCree = produitFactory.createProduit(nom, prix, qte);
-			//lesProduits.add(unProduit);
+			if (produitCree)
+				lesProduits.add(unProduit);
 		}
 
 		return produitCree;
 	}
 
 	@Override
-	public int addProduits(List<I_Produit> l) {
-		// TODO Auto-generated method stub
-		int j = 0;
-		if (l != null) {
-			for (int i = 0; i < l.size(); i++) {
-				if (existe(l.get(i).getNom()) == false && l.get(i).getQuantite() >= 0
-						&& l.get(i).getPrixUnitaireHT() > 0) {
-					lesProduits.add(l.get(i));
-					j++;
+	public int addProduits(List<I_Produit> listProduits) {
+		int nbProduitAjoutee = 0;
+		if (listProduits != null) {
+			for (int i = 0; i < listProduits.size(); i++) {
+				if (leProduitExiste(listProduits.get(i).getNom()) == false && listProduits.get(i).getQuantite() >= 0
+						&& listProduits.get(i).getPrixUnitaireHT() > 0) {
+					String nom = listProduits.get(i).getNom();
+					double prix = listProduits.get(i).getPrixUnitaireHT();
+					int qte = listProduits.get(i).getQuantite();
+					if (produitFactory.createProduit(nom, prix, qte))
+						lesProduits.add(listProduits.get(i));
+					nbProduitAjoutee++;
 				}
 			}
 		}
-		return j;
+		return nbProduitAjoutee;
 	}
 
 	@Override
 	public boolean removeProduit(String nom) {
 		boolean produitSupprime = false;
-		if (existe(nom) && nom != null) {
+		if (leProduitExiste(nom) && nom != null) {
 			produitSupprime = produitFactory.deleteProduit(nom);
+			if (produitSupprime)
+				lesProduits.remove(get(nom));
 		}
 		return produitSupprime;
 	}
@@ -77,9 +86,10 @@ public class Catalogue implements I_Catalogue {
 	@Override
 	public boolean acheterStock(String nomProduit, int qteAchetee) {
 		boolean stockAjoute = false;
-		if (existe(nomProduit)) {
+		if (leProduitExiste(nomProduit)) {
 			stockAjoute = produitFactory.ajouterQuantiteProduit(nomProduit, qteAchetee);
-//					get(nomProduit).ajouter(qteAchetee);
+			if(stockAjoute)
+				get(nomProduit).ajouter(qteAchetee);
 		}
 		return stockAjoute;
 	}
@@ -87,17 +97,16 @@ public class Catalogue implements I_Catalogue {
 	@Override
 	public boolean vendreStock(String nomProduit, int qteVendue) {
 		boolean leStockEstVendu = false;
-		if (existe(nomProduit)) {
+		if (leProduitExiste(nomProduit)) {
 			leStockEstVendu = produitFactory.enleverQuantiteProduit(nomProduit, qteVendue);
-//			 = get(nomProduit).enlever(qteVendue);
+			if(leStockEstVendu)
+				get(nomProduit).enlever(qteVendue);
 		}
 		return leStockEstVendu;
 	}
 
 	@Override
 	public String[] getNomProduits() {
-		lesProduits.clear();
-		lesProduits	 = produitFactory.getToutLesProduits();
 		String tableauCaractere[] = new String[lesProduits.size()];
 		int i = 0;
 		while (i < lesProduits.size()) {
@@ -110,17 +119,13 @@ public class Catalogue implements I_Catalogue {
 
 	@Override
 	public double getMontantTotalTTC() {
-		// TODO Auto-generated method stub
 		double montantTotalTTC = 0;
 		int i = 0;
-		lesProduits.clear();
-		lesProduits	 = produitFactory.getToutLesProduits();
 		while (i < lesProduits.size()) {
 			montantTotalTTC += lesProduits.get(i).getPrixStockTTC();
 			i++;
 		}
 		return (double) Math.round(montantTotalTTC * 100) / 100;
-		// return montantTotalTTC;
 	}
 
 	@Override
@@ -129,18 +134,8 @@ public class Catalogue implements I_Catalogue {
 		produitFactory.deleteAll();
 
 	}
-	/*
-	 * Vrai si : le produit existe dans la liste Faux si : le produi n'existe
-	 * pas
-	 * 
-	 */
-
-	private boolean existe(String nomP) {
-		// A Modifier /!\---------------------------------------------------/!\
-		
+	private boolean leProduitExiste(String nomP) {
 		boolean produitExist = false;
-		lesProduits.clear();
-		lesProduits	 = produitFactory.getToutLesProduits();
 		if (lesProduits != null && nomP != null) {
 			nomP = nomP.replaceAll("[\\t]", " ").trim();
 			int i = 0;
@@ -157,18 +152,11 @@ public class Catalogue implements I_Catalogue {
 		return produitExist;
 	}
 
-	/*
-	 * @Override public String toString() { return "Catalogue [lesProduits=" +
-	 * lesProduits + "]"; }
-	 */
-
 	private I_Produit get(String nomP) {
-		lesProduits.clear();
-		lesProduits	 = produitFactory.getToutLesProduits();
 		I_Produit produitNom = null;
 		boolean check = false;
 		int i = 0;
-		if (existe(nomP) && nomP != null) {
+		if (leProduitExiste(nomP) && nomP != null) {
 
 			while (check == false) {
 				if (lesProduits.get(i).getNom() == nomP) {
@@ -188,7 +176,7 @@ public class Catalogue implements I_Catalogue {
 		int i = 0;
 		List<I_Produit> lesProduitsBdd;
 		lesProduitsBdd = produitFactory.getToutLesProduits();
-		
+
 		while (i < lesProduitsBdd.size()) {
 			toStringCat += lesProduitsBdd.get(i).toString() + "\n";
 			i++;
@@ -196,7 +184,10 @@ public class Catalogue implements I_Catalogue {
 		toStringCat += "\nMontant total TTC du stock : " + nf.format(getMontantTotalTTC());
 		return toStringCat;
 	}
-	
 
+	@Override
+	public void fermerAccesAuDonnees() {
+		produitFactory.fermerAccesAuDonnees();
+	}
 
 }

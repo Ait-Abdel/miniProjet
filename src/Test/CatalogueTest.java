@@ -1,4 +1,4 @@
-﻿package metier;
+﻿package Test;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import metier.Catalogue;
+import metier.I_Catalogue;
+import metier.I_Produit;
+import metier.Produit;
 
 
 public class CatalogueTest {

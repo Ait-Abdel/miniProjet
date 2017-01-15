@@ -29,7 +29,7 @@ public class FenetrePrincipale extends JFrame implements ActionListener,
 	private Controleur controleur; 
 
 	
-	public FenetrePrincipale(/*ControleurNouveauSuppression p_cns, ControleurAchatVente p_cav*/) {
+	public FenetrePrincipale() {
 		controleur = new Controleur();
 		this.cns = controleur.getCns();
 		this.cav = controleur.getCav();
@@ -106,6 +106,7 @@ public class FenetrePrincipale extends JFrame implements ActionListener,
 		if (e.getSource() == btVente)
 			new FenetreVente(tabProduits,cav);
 		if (e.getSource() == btQuitter){
+			controleur.fermerAccesAuDonnees();
 			System.out.println("Au revoir");
 			System.exit(0);
 		}	

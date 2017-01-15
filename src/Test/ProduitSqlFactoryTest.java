@@ -1,4 +1,4 @@
-package Dao;
+package Test;
 
 import static org.junit.Assert.*;
 
@@ -8,12 +8,18 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import Dao.ProduitFactory;
+import Dao.ProduitSqlFactory;
 import metier.I_Produit;
 import metier.Produit;
 
 public class ProduitSqlFactoryTest {
-	private ProduitSqlFactory produitSqlFactory;
+	private ProduitFactory produitSqlFactory;
 
+	@Before
+	public void setUp() throws Exception {
+		produitSqlFactory.deleteAll();
+	}
 	
 	
 	@Before
@@ -80,7 +86,6 @@ public class ProduitSqlFactoryTest {
 	}
 	@Test
 	public void afficherTousLesProduits_AvecDesProduits(){
-		produitSqlFactory.deleteAll();
 		String nom = "Velo", nom2="Ski", nom3 ="Luge";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
@@ -99,7 +104,6 @@ public class ProduitSqlFactoryTest {
 	
 	@Test
 	public void afficherTousLesProduits_SansProduits(){
-		produitSqlFactory.deleteAll();
 		List<I_Produit>lesProduits = new ArrayList<>();
 		
 		assertEquals("Afficher tous les produits", produitSqlFactory.getToutLesProduits().toString(), lesProduits.toString());
@@ -111,7 +115,7 @@ public class ProduitSqlFactoryTest {
 		String nom = "Montre";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		//produitSqlFactory.createProduit(nom, prixUnitaireHT, quantiteStock);
+		produitSqlFactory.createProduit(nom, prixUnitaireHT, quantiteStock);
 		
 		I_Produit produit = new Produit(nom, prixUnitaireHT, quantiteStock);
 		
