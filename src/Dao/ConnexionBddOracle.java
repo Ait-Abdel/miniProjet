@@ -13,8 +13,8 @@ public class ConnexionBddOracle {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
 			String url = "jdbc:oracle:thin:@162.38.222.149:1521:iut";
-			String login = "";
-			String mdp = "";
+			String login = "aitabdelloilia";
+			String mdp = "1107026887V";
 
 			connection = DriverManager.getConnection(url, login, mdp);
 

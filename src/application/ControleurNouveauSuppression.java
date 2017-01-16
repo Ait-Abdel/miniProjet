@@ -5,7 +5,7 @@ import metier.*;
 
 public class ControleurNouveauSuppression {
 	private I_Catalogue cat;
-	private ProduitFactory produitFactory;
+	private I_ProduitDAO produitFactory;
 	
 	
 	public ControleurNouveauSuppression(I_Catalogue cat) {

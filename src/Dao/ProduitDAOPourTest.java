@@ -4,7 +4,7 @@ import java.util.List;
 
 import metier.I_Produit;
 
-public class ProduitDAOPourTest implements ProduitFactory {
+public class ProduitDAOPourTest implements I_ProduitDAO {
 
 	@Override
 	public List<I_Produit> getToutLesProduits() {
