@@ -20,7 +20,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 	}
 
 	@Override
-	public List<I_Produit> getToutLesProduits() {
+	public List<I_Produit> getToutLesProduits() throws DAOException {
 		List<I_Produit> lesProduits = new ArrayList<I_Produit>();
 
 		String req = "Select * from Produits";
@@ -41,6 +41,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Erreur lors de l'affichage de tous les produits");
 		} finally {
 			closeStatement(statement);
 		}
@@ -49,7 +50,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 	}
 
 	@Override
-	public boolean createProduit(String nom, double prixUnitaireHT, int quantiteStock) {
+	public boolean createProduit(String nom, double prixUnitaireHT, int quantiteStock) throws DAOException {
 		boolean produitCreer = false;
 		String req = "call nouveauProduit(?,?,?)";
 		CallableStatement callableStatement = null;
@@ -62,19 +63,24 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 				produitCreer = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Erreur lors de l'ajout d'un produit");
 		} finally {
-			try {
-				callableStatement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			callableStatementClose(callableStatement);
 		}
 
 		return produitCreer;
 	}
 
+	private void callableStatementClose(CallableStatement callableStatement) {
+		try {
+			callableStatement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
-	public boolean deleteProduit(String nom) {
+	public boolean deleteProduit(String nom) throws DAOException {
 		boolean produitSupprimee = false;
 		Statement statement = null;
 		PreparedStatement preparedStatement = null;
@@ -86,6 +92,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 				produitSupprimee = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Erreur lors de la suppression d'un produit");
 		} finally {
 			closePreparedStatement(preparedStatement);
 		}
@@ -93,7 +100,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 	}
 
 	@Override
-	public boolean enleverQuantiteProduit(String nom, int quantiteStock) {
+	public boolean enleverQuantiteProduit(String nom, int quantiteStock) throws DAOException {
 		boolean qteEnlevee = false;
 		Statement statement = null;
 		I_Produit produit = getProduit(nom);
@@ -107,6 +114,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 					qteEnlevee = true;
 			} catch (SQLException e) {
 				e.printStackTrace();
+				throw new DAOException("Erreur lors de la suppression d'une quantité d'un produit");
 			} finally {
 				closeStatement(statement);
 			}
@@ -116,7 +124,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 	}
 
 	@Override
-	public boolean ajouterQuantiteProduit(String nom, int quantiteStock) {
+	public boolean ajouterQuantiteProduit(String nom, int quantiteStock) throws DAOException {
 		boolean qteAjoutee = false;
 		Statement statement = null;
 		String req = null;
@@ -130,6 +138,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 					qteAjoutee = true;
 			} catch (SQLException e) {
 				e.printStackTrace();
+				throw new DAOException("Erreur lors de l'ajout d'une quantité d'un produit");
 			} finally {
 				closeStatement(statement);
 
@@ -148,7 +157,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 	}
 
 	@Override
-	public boolean deleteAll() {
+	public boolean deleteAll() throws DAOException {
 		boolean supprimertousLesProduits = false;
 		Statement statement = null;
 
@@ -159,6 +168,8 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 				supprimertousLesProduits = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+
+			throw new DAOException("Erreur lors de la suppression de tous les produits");
 		} finally {
 			closeStatement(statement);
 		}
@@ -174,7 +185,7 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 		}
 	}
 
-	public I_Produit getProduit(String nom) {
+	public I_Produit getProduit(String nom) throws DAOException {
 		I_Produit produit = null;
 		Statement statement = null;
 		try {
@@ -191,6 +202,8 @@ public class ProduitSqlDAO implements I_ProduitDAO {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+
+			throw new DAOException("Erreur lors de l'affichage d'un produit");
 			
 		} finally {
 			closeStatement(statement);

@@ -19,7 +19,11 @@ public class Catalogue implements I_Catalogue {
 	public Catalogue() {
 		ProduitFactory factory = new ProduitFactory();
 		produitDAO = factory.createProduitDAO();
-		lesProduits = produitDAO.getToutLesProduits();
+		try {
+			lesProduits = produitDAO.getToutLesProduits();
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 	public Catalogue(List<I_Produit> produits) {
 		produitDAO = new ProduitDAOPourTest();
@@ -34,7 +38,11 @@ public class Catalogue implements I_Catalogue {
 				String nom = produit.getNom();
 				double prix = produit.getPrixUnitaireHT();
 				int qte = produit.getQuantite();
-				produitCree = produitDAO.createProduit(nom, prix, qte);
+				try {
+					produitCree = produitDAO.createProduit(nom, prix, qte);
+				} catch (DAOException e) {
+					e.printStackTrace();
+				}
 				if (produitCree)
 					lesProduits.add(produit);
 			}
@@ -49,7 +57,11 @@ public class Catalogue implements I_Catalogue {
 
 		if (leProduitExiste(nom) == false && prix > 0 && qte >= 0) {
 			Produit unProduit = new Produit(nom, (float) prix, qte);
-			produitCree = produitDAO.createProduit(nom, prix, qte);
+			try {
+				produitCree = produitDAO.createProduit(nom, prix, qte);
+			} catch (DAOException e) {
+				e.printStackTrace();
+			}
 			if (produitCree)
 				lesProduits.add(unProduit);
 		}
@@ -67,8 +79,12 @@ public class Catalogue implements I_Catalogue {
 					String nom = listProduits.get(i).getNom();
 					double prix = listProduits.get(i).getPrixUnitaireHT();
 					int qte = listProduits.get(i).getQuantite();
-					if (produitDAO.createProduit(nom, prix, qte))
-						lesProduits.add(listProduits.get(i));
+					try {
+						if (produitDAO.createProduit(nom, prix, qte))
+							lesProduits.add(listProduits.get(i));
+					} catch (DAOException e) {
+						e.printStackTrace();
+					}
 					nbProduitAjoutee++;
 				}
 			}
@@ -80,7 +96,11 @@ public class Catalogue implements I_Catalogue {
 	public boolean removeProduit(String nom) {
 		boolean produitSupprime = false;
 		if (leProduitExiste(nom) && nom != null) {
-			produitSupprime = produitDAO.deleteProduit(nom);
+			try {
+				produitSupprime = produitDAO.deleteProduit(nom);
+			} catch (DAOException e) {
+				e.printStackTrace();
+			}
 			if (produitSupprime)
 				lesProduits.remove(get(nom));
 		}
@@ -91,7 +111,11 @@ public class Catalogue implements I_Catalogue {
 	public boolean acheterStock(String nomProduit, int qteAchetee) {
 		boolean stockAjoute = false;
 		if (leProduitExiste(nomProduit)) {
-			stockAjoute = produitDAO.ajouterQuantiteProduit(nomProduit, qteAchetee);
+			try {
+				stockAjoute = produitDAO.ajouterQuantiteProduit(nomProduit, qteAchetee);
+			} catch (DAOException e) {
+				e.printStackTrace();
+			}
 			if(stockAjoute)
 				stockAjoute = get(nomProduit).ajouter(qteAchetee);
 		}
@@ -102,7 +126,11 @@ public class Catalogue implements I_Catalogue {
 	public boolean vendreStock(String nomProduit, int qteVendue) {
 		boolean leStockEstVendu = false;
 		if (leProduitExiste(nomProduit)) {
-			leStockEstVendu = produitDAO.enleverQuantiteProduit(nomProduit, qteVendue);
+			try {
+				leStockEstVendu = produitDAO.enleverQuantiteProduit(nomProduit, qteVendue);
+			} catch (DAOException e) {
+				e.printStackTrace();
+			}
 			if(leStockEstVendu)
 				leStockEstVendu = get(nomProduit).enlever(qteVendue);
 		}
@@ -135,7 +163,11 @@ public class Catalogue implements I_Catalogue {
 	@Override
 	public void clear() {
 		lesProduits.clear();
-		produitDAO.deleteAll();
+		try {
+			produitDAO.deleteAll();
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 
 	}
 	private boolean leProduitExiste(String nomP) {

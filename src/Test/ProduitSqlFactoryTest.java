@@ -18,9 +18,6 @@ public class ProduitSqlFactoryTest {
 	@Before
 	public void setUp() throws Exception {
 		produitDAO.deleteAll();
-		//produitSqlFactory.fermerAccesAuDonnees();
-		ProduitFactory factory = new ProduitFactory();
-		produitDAO = factory.createProduitDAO();
 	}
 	
 	
@@ -36,11 +33,15 @@ public class ProduitSqlFactoryTest {
 	}
 	
 	@Test
-	public void ajouterUnProduit(){
+	public void ajouterUnProduit() {
 		String nom = "Kit Kat V2";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		assertTrue("Ajouter un produit", produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock));
+		try {
+			assertTrue("Ajouter un produit", produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
@@ -48,8 +49,12 @@ public class ProduitSqlFactoryTest {
 		String nom = "Kit Kat";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		assertTrue("Ajout du premier produit", produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock));
-		assertFalse("Ajout du deuxieme produit", produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock));
+		try {
+			assertTrue("Ajout du premier produit", produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock));
+			assertFalse("Ajout du deuxieme produit", produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 
 	}
 	
@@ -59,9 +64,12 @@ public class ProduitSqlFactoryTest {
 		String nom = "Mars";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
-		assertTrue("Supprimer un produit",produitDAO.deleteProduit(nom));
-		produitDAO.fermerAccesAuDonnees();
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			assertTrue("Supprimer un produit",produitDAO.deleteProduit(nom));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 
 	}
 	
@@ -70,9 +78,13 @@ public class ProduitSqlFactoryTest {
 		String nom = "Terre";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
-		assertTrue("Supprimer premier produit",produitDAO.deleteProduit(nom));
-		assertFalse("Supprimer deuxieme produit",produitDAO.deleteProduit(nom));
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			assertTrue("Supprimer premier produit",produitDAO.deleteProduit(nom));
+			assertFalse("Supprimer deuxieme produit",produitDAO.deleteProduit(nom));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 
 	}
 	
@@ -81,11 +93,15 @@ public class ProduitSqlFactoryTest {
 		String nom = "Mars", nom2="Venus", nom3 ="Saturne";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
-		produitDAO.createProduit(nom2, prixUnitaireHT, quantiteStock);
-		produitDAO.createProduit(nom3, prixUnitaireHT, quantiteStock);
-		
-		assertTrue("Supprimer tous les produits", produitDAO.deleteAll());
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			produitDAO.createProduit(nom2, prixUnitaireHT, quantiteStock);
+			produitDAO.createProduit(nom3, prixUnitaireHT, quantiteStock);
+			
+			assertTrue("Supprimer tous les produits", produitDAO.deleteAll());
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	@Test
@@ -93,24 +109,33 @@ public class ProduitSqlFactoryTest {
 		String nom = "Velo", nom2="Ski", nom3 ="Luge";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
-		produitDAO.createProduit(nom2, prixUnitaireHT, quantiteStock);
-		produitDAO.createProduit(nom3, prixUnitaireHT, quantiteStock);
+
 		
-		
-		List<I_Produit>lesProduits = new ArrayList<>();
-		lesProduits.add(new Produit(nom, prixUnitaireHT, quantiteStock));
-		lesProduits.add(new Produit(nom2, prixUnitaireHT, quantiteStock));
-		lesProduits.add(new Produit(nom3, prixUnitaireHT, quantiteStock));
-		
-		assertEquals("Afficher tous les produits", produitDAO.getToutLesProduits().toString(), lesProduits.toString());
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			produitDAO.createProduit(nom2, prixUnitaireHT, quantiteStock);
+			produitDAO.createProduit(nom3, prixUnitaireHT, quantiteStock);
+			
+			
+			List<I_Produit>lesProduits = new ArrayList<>();
+			lesProduits.add(new Produit(nom, prixUnitaireHT, quantiteStock));
+			lesProduits.add(new Produit(nom2, prixUnitaireHT, quantiteStock));
+			lesProduits.add(new Produit(nom3, prixUnitaireHT, quantiteStock));
+			assertEquals("Afficher tous les produits", produitDAO.getToutLesProduits().toString(), lesProduits.toString());
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void afficherTousLesProduits_SansProduits(){
 		List<I_Produit>lesProduits = new ArrayList<>();
 		
-		assertEquals("Afficher tous les produits", produitDAO.getToutLesProduits().toString(), lesProduits.toString());
+		try {
+			assertEquals("Afficher tous les produits", produitDAO.getToutLesProduits().toString(), lesProduits.toString());
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
@@ -119,11 +144,15 @@ public class ProduitSqlFactoryTest {
 		String nom = "Montre";
 		double prixUnitaireHT = 1;
 		int quantiteStock = 2;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
-		
-		I_Produit produit = new Produit(nom, prixUnitaireHT, quantiteStock);
-		
-		assertEquals("Afficher tous les produits",produit.toString(), produitDAO.getProduit(nom).toString());
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			
+			I_Produit produit = new Produit(nom, prixUnitaireHT, quantiteStock);
+			
+			assertEquals("Afficher tous les produits",produit.toString(), produitDAO.getProduit(nom).toString());
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -132,9 +161,13 @@ public class ProduitSqlFactoryTest {
 		String nom = "Crayon � mine";
 		double prixUnitaireHT = 3;
 		int quantiteStock = 22;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
-		
-		assertTrue("Enlever une quantit� a un produit existant",produitDAO.enleverQuantiteProduit(nom, 2));
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			
+			assertTrue("Enlever une quantit� a un produit existant",produitDAO.enleverQuantiteProduit(nom, 2));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -143,9 +176,13 @@ public class ProduitSqlFactoryTest {
 		String nom = "Bouteille de lait";
 		double prixUnitaireHT = 3;
 		int quantiteStock = 1;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			assertFalse("Enlever une quantit� a un produit existant",produitDAO.enleverQuantiteProduit(nom, 2));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 		
-		assertFalse("Enlever une quantit� a un produit existant",produitDAO.enleverQuantiteProduit(nom, 2));
 		
 	}
 	
@@ -154,9 +191,13 @@ public class ProduitSqlFactoryTest {
 		String nom = "Bouteille deau mineral";
 		double prixUnitaireHT = 2;
 		int quantiteStock = 1;
-		produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
-		
-		assertTrue("Ajouter une quantit� a un produit existant",produitDAO.ajouterQuantiteProduit(nom, 2));
+		try {
+			produitDAO.createProduit(nom, prixUnitaireHT, quantiteStock);
+			
+			assertTrue("Ajouter une quantit� a un produit existant",produitDAO.ajouterQuantiteProduit(nom, 2));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

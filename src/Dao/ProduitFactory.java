@@ -4,8 +4,8 @@ package Dao;
 
 public class ProduitFactory {
 	
-	public ProduitSqlDAO createProduitDAO(){
-		return new ProduitSqlDAO();
+	public I_ProduitDAO createProduitDAO(){
+		return new ProduitXmlDAO();
 	}
 
 }
